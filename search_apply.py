@@ -155,7 +155,6 @@ def autoapply(user,passcode,jobdesgn,yrsexp):
     
     job_df = get_joblink_with_login(user,passcode,jobdesgn,yrsexp)
     print(f'keyskill to serach from {len(job_df.URL.values)} jobs')
-    print(list(job_df.URL.values))
     apply_df = get_keyskill(user,passcode,job_df)    
     current_datetime = datetime.datetime.now()
     formatted_datetime = current_datetime.strftime("%d%m%y_%I%M%p")
