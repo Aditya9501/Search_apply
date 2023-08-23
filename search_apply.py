@@ -149,15 +149,7 @@ def get_keyskill_up(user,passcode,df):
                 
                 button = driver.find_element(By.XPATH, "//button[2]")
                 main_skill.append((keyskills, a, button.text,joburl))
-#                 try:
-#                     button = driver.find_element(By.XPATH, "//button[2]")
-#                 except Exception as e:
-#                     button = None
 
-#                 if button:
-#                     main_skill.append((keyskills, a, button.text,joburl))
-#                 else:
-#                     main_skill.append((keyskills, a))
 
             except TimeoutException as e2:
                 try:
@@ -173,15 +165,6 @@ def get_keyskill_up(user,passcode,df):
 
                     button = driver.find_element(By.XPATH, "//button[2]")
                     main_skill.append((keyskills, a, button.text,joburl))
-#                     try:
-#                         button = driver.find_element(By.XPATH, "//button[2]")
-#                     except Exception as e:
-#                         button = None
-
-#                     if button:
-#                         main_skill.append((keyskills, a, button.text))
-#                     else:
-#                         main_skill.append((keyskills, a))
 
                 except TimeoutException as e3:
                     main_skill.append(('keyskills', 'a', 'button.text'))  # No need to print here since the visibility print statements are removed
@@ -193,4 +176,3 @@ def get_keyskill_up(user,passcode,df):
     apply_df = pd.merge(left=df,right=apply_df,on='URL',how='inner')
     return apply_df
 
-print(get_keyskill_up('adi221800@gmail.com','5zJV!&zCSw6pGdA',get_joblink_with_login('adi221800@gmail.com','5zJV!&zCSw6pGdA','Data Science',2)))
