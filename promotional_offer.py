@@ -199,3 +199,16 @@ def autoapply(user,passcode,jobdesgn,yrsexp):
     #         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, to_apply_button))).click()
 
     # driver.quit()
+
+def parallel_scraping(search_jobs):
+    processes = []
+    for job in search_jobs:
+        process = multiprocessing.Process(target=autoapply, args=(username, passcode, job, yrsexp))
+        processes.append(process)
+        process.start()
+    
+    for process in processes:
+        process.join()
+
+if __name__ == "__main__":
+    parallel_scraping(search_job)
