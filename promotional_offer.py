@@ -199,5 +199,3 @@ def autoapply(user,passcode,jobdesgn,yrsexp):
     #         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, to_apply_button))).click()
 
     # driver.quit()
-
-autoapply('adi221800@gmail.com','5zJV!&zCSw6pGdA','AI', 3)
