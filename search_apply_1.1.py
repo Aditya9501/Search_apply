@@ -18,8 +18,6 @@ username_details = (By.XPATH,"//input[@placeholder='Enter your active Email ID /
 password_details = (By.XPATH, "//input[@placeholder='Enter your password']")
 log_in_click = (By.XPATH,"//button[@type='submit']")
 
-
-
 def get_joblink_with_login(user,passcode,jobdesgn,yrsexp):
     driver = webdriver.Chrome()
     driver.get(naukri)
@@ -200,16 +198,19 @@ def autoapply(user,passcode,jobdesgn,yrsexp):
 
     # driver.quit()
 
+# autoapply('adi221800@gmail.com','5zJV!&zCSw6pGdA','AI', 3)
 
 def parallel_scraping(search_jobs):
     processes = []
     for job in search_jobs:
-        process = multiprocessing.Process(target=autoapply, args=(username, passcode, job, yrsexp))
+        process = multiprocessing.Process(target=autoapply, args=('adi221800@gmail.com', '5zJV!&zCSw6pGdA', job, 4))
         processes.append(process)
         process.start()
     
     for process in processes:
         process.join()
 
+search_job_list = ['AI','Data Science','Data Analyst','ML']
+
 if __name__ == "__main__":
-    parallel_scraping(search_job)
+    parallel_scraping(search_job_list)
