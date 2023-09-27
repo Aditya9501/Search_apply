@@ -67,7 +67,7 @@ def get_joblink_with_login(user,passcode,jobdesgn,yrsexp):
     total_listing = driver.find_element(By.XPATH, "/html[1]/body[1]/div[1]/div[4]/div[1]/div[1]/section[2]/div[1]/div[1]/span[1]").text
     pages = int(int(total_listing.split(" ")[-1])/(int(total_listing.split(' ')[2])))
 
-    print(f'Total Job postings are {total_listing.split(" ")[-1]}')
+    print(f'Total Job postings for {jobdesgn} are {total_listing.split(" ")[-1]}')
     
     keyword_title = ["Data Analyst", "Data Scientist","Python","Machine Learning","Artificial Intelligence", "Data Science","Visusalization",
                     "Deep Learning","Natural Language","Computer Vision","Data Mining","Power BI", "Tableau","Data Analysis","Data Modeling",
@@ -157,7 +157,7 @@ def get_keyskill(user,passcode,df):
 def autoapply(user,passcode,jobdesgn,yrsexp):
     
     job_df = get_joblink_with_login(user,passcode,jobdesgn,yrsexp)
-    print(f'keyskill to serach from {len(job_df.URL.values)} jobs')
+    print(f'keyskill to serach from {len(job_df.URL.values)} for {jobdesgn} jobs')
     
     apply_df = get_keyskill(user,passcode,job_df)
     apply_df = apply_df[~apply_df["URL"].duplicated()]    
@@ -198,12 +198,10 @@ def autoapply(user,passcode,jobdesgn,yrsexp):
 
     # driver.quit()
 
-# autoapply('adi221800@gmail.com','5zJV!&zCSw6pGdA','AI', 3)
-
 def parallel_scraping(search_jobs):
     processes = []
     for job in search_jobs:
-        process = multiprocessing.Process(target=autoapply, args=('adi221800@gmail.com', '5zJV!&zCSw6pGdA', job, 4))
+        process = multiprocessing.Process(target=autoapply, args=('user', 'passcode', job, yrsexp))
         processes.append(process)
         process.start()
     
