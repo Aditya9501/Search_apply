@@ -118,7 +118,7 @@ def get_df(user,passcode,jobdesgn,yrsexp, list_urls):
     filename = list_urls[-1].split('?')[0].split('-')[-1]+'.csv'
     save_dir = 'your_path'
     fp = os.path.join(save_dir,filename)
-    job_df.to_csv(fp)
+    job_df.to_csv(fp, index = False)
 
 def splitted_list(iplist, num_parts):
     length = len(iplist)
