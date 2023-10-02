@@ -116,7 +116,7 @@ def get_df(user,passcode,jobdesgn,yrsexp, list_urls):
     
     job_df = pd.DataFrame({'Title' : job_title, 'URL' : job_link})
     filename = list_urls[-1].split('?')[0].split('-')[-1]+'.csv'
-    save_dir = r'C:\Users\Aditya\Desktop\Naukri\Large_Scrape'
+    save_dir = 'your_path'
     fp = os.path.join(save_dir,filename)
     job_df.to_csv(fp)
 
@@ -128,14 +128,14 @@ def splitted_list(iplist, num_parts):
 def parallel_scraping_large_scale(urls_lists):
     processes = []
     for ulist in urls_lists:
-        process = multiprocessing.Process(target=get_df, args=('adi221800@gmail.com', '5zJV!&zCSw6pGdA', 'Data Sciecne', 4, ulist))
+        process = multiprocessing.Process(target=get_df, args=(user,passcode,jobdesgn,yrsexp, ulist))
         processes.append(process)
         process.start()
     
     for process in processes:
         process.join()
 
-search_url_list = splitted_list(get_total_urls('adi221800@gmail.com', '5zJV!&zCSw6pGdA', 'Data Analyst', 3),500)
+search_url_list = splitted_list(get_total_urls(user,passcode,jobdesgn,yrsexp),500)
 
 if __name__ == "__main__":
     parallel_scraping_large_scale(search_url_list)
