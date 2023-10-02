@@ -1,5 +1,4 @@
 from selenium import webdriver
-# from webdriver_manager.chrome import ChromeDriverManager
 import pandas as pd
 import datetime
 import time
@@ -173,7 +172,7 @@ def autoapply(user,passcode,jobdesgn,yrsexp):
     formatted_datetime = current_datetime.strftime("%d%m%y_%I%M%p")
 
     filename = formatted_datetime+'_'+jobdesgn+'.csv'
-    path = r'C:\Users\Aditya\Desktop\Naukri\Search_Apply'
+    path = 'your_path'
     apply_df.to_csv(os.path.join(path,filename),index=False)
 
 
