@@ -175,19 +175,20 @@ def autoapply(user,passcode,jobdesgn,yrsexp):
     path = 'your_path'
     apply_df.to_csv(os.path.join(path,filename),index=False)
 
-
-
-def parallel_scraping(search_jobs):
+def parallel_scraping_large_scale(user, passcode, jobdesgn, yrsexp, urls_lists):
     processes = []
-    for job in search_jobs:
-        process = multiprocessing.Process(target=autoapply, args=('adi221800@gmail.com', '5zJV!&zCSw6pGdA', job, 4))
+    for ulist in urls_lists:
+        process = multiprocessing.Process(target=get_df, args=(user,passcode,jobdesgn,yrsexp, ulist))
         processes.append(process)
         process.start()
     
     for process in processes:
         process.join()
 
-search_job_list = ['AI','Data Science','Data Analyst','ML']
-
 if __name__ == "__main__":
-    parallel_scraping(search_job_list)
+    
+    search_url_list = splitted_list(get_total_urls(user,passcode,jobdesgn,yrsexp),400)
+    t1 = datetime.datetime.now()
+    parallel_scraping_large_scale(user,passcode,jobdesgn,yrsexp,search_url_list)
+    t2 = datetime.datetime.now()
+    print(t2-t1)
