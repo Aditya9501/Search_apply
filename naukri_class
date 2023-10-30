@@ -1,3 +1,17 @@
+from selenium import webdriver
+import pandas as pd
+import datetime
+import time
+from time import sleep
+from selenium.webdriver.common.by import By
+from selenium.webdriver import ActionChains
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException, NoSuchElementException
+import os
+import multiprocessing
+from collections import Counter
+
 class NaukriSearch:
     
     def __init__(self, user, passcode, jobdesgn, yrsexp, save_path):
