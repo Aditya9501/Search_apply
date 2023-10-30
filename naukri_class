@@ -43,7 +43,7 @@ class NaukriSearch:
         self.wait.until(EC.visibility_of_element_located(self.username_details)).send_keys(self.user)
         self.wait.until(EC.visibility_of_element_located(self.password_details)).send_keys(self.passcode)
         self.wait.until(EC.element_to_be_clickable(self.log_in_click)).click()
-        
+            
     def get_latest_job_df(self):
         self.login_account()
         self.wait.until(EC.element_to_be_clickable(self.type_job_loc)).click()
@@ -57,81 +57,6 @@ class NaukriSearch:
         self.wait.until(EC.element_to_be_clickable(self.freshness)).click()
         self.wait.until(EC.element_to_be_clickable(self.one_day)).click()
         
-
-        self.wait.until(EC.visibility_of_element_located(self.num_job_posting))
-        time.sleep(2)
-        total_listing = self.driver.find_element(*self.num_job_posting).text
-        pages = int(total_listing.split(" ")[-1])//int(total_listing.split(' ')[2])
-        print(total_listing)
-        
-        keyword_title = ["Data Analyst", "Data Scientist","Python","Machine Learning","Artificial Intelligence", "Data Science","Visusalization",
-                        "Deep Learning","Natural Language","Computer Vision","Data Mining","Power BI", "Tableau","Data Analysis","Data Modeling",
-                        "Data Wrangling","Business Analyst"]
-        keyword_title2 = ["ML", "AI", "CV", "NLP","SQL"]
-        not_keywords = ["Developer","Django","Stack","Config","Server","Admin","Associate","Content","Female"]
-        
-        job_link = []
-        job_title = []
-        print_err1 = []
-        try:
-            
-            i = 1
-
-            while i < pages+2:
-                
-                self.wait.until(EC.presence_of_all_elements_located(self.jobs_wait))
-
-                jobs = self.driver.find_elements(*self.jobs_wait)
-
-                try:
-                    for j in range(len(jobs)):
-
-                        job_posting = self.driver.find_element(By.XPATH, f"(//div[contains(@class,'cust-job-tuple layout-wrapper lay-2 sjw__tuple')])[{j+1}]/div[1]/a").text
-
-                        if (any(item.lower() in job_posting.lower() for item in keyword_title) or any(item in job_posting for item in keyword_title2)) and not any(item.lower() in job_posting.lower() for item in not_keywords):
-
-                            job_link.append(self.driver.find_element(By.XPATH, f"(//div[contains(@class,'cust-job-tuple layout-wrapper lay-2 sjw__tuple')])[{j+1}]/div[1]/a").get_attribute('href'))
-                            job_title.append(job_posting)
-
-                except Exception as e1:
-                    print_err1.append([f'page_{i}_post{j+1}',e1])
-
-                try:
-                    self.wait.until(EC.visibility_of_element_located(self.next_button)).click()
-                    print(f'moving to page {i+1} is {self.driver.find_element(*self.next_button).is_displayed()}')
-                    
-
-                except Exception as e:
-                    print('No further Jobs')
-
-                percent_complete = (i / (pages+2)) * 100
-                print(f"Progress: {percent_complete:.2f}%\r", end='')
-
-                i += 1
-
-            if i == pages+2:
-                print("Progress: 100.00%")
-        
-        except Exception as e:
-            print(e)
-        
-        job_df = pd.DataFrame({'Title' : job_title, 'URL' : job_link})
-        return job_df
-    
-    def get_latest_job_df1(self):
-        self.login_account()
-        self.wait.until(EC.element_to_be_clickable(self.type_job_loc)).click()
-        self.wait.until(EC.element_to_be_clickable(self.job_type_loc)).send_keys(self.jobdesgn)
-        self.wait.until(EC.element_to_be_clickable(self.search_loc)).click()
-        
-        curl = self.driver.current_url
-        new_curl = curl+f'&experience={self.yrsexp}'
-        self.driver.get(new_curl)
-
-        self.wait.until(EC.element_to_be_clickable(self.freshness)).click()
-        self.wait.until(EC.element_to_be_clickable(self.one_day)).click()
-        
-
         self.wait.until(EC.visibility_of_element_located(self.num_job_posting))
         time.sleep(2)
         total_listing = self.driver.find_element(*self.num_job_posting).text
@@ -158,24 +83,18 @@ class NaukriSearch:
         print_err1 = []
         
         try:
-            
             i = 0
-
             while i < len(new_curls):
-                z=i
-                self.driver.get(new_curls[z])
                 
+                self.driver.get(new_curls[i])
                 self.wait.until(EC.presence_of_all_elements_located(self.jobs_wait))
-
                 jobs = self.driver.find_elements(*self.jobs_wait)
 
                 try:
                     for j in range(len(jobs)):
-
                         job_posting = self.driver.find_element(By.XPATH, f"(//div[contains(@class,'cust-job-tuple layout-wrapper lay-2 sjw__tuple')])[{j+1}]/div[1]/a").text
 
                         if (any(item.lower() in job_posting.lower() for item in keyword_title) or any(item in job_posting for item in keyword_title2)) and not any(item.lower() in job_posting.lower() for item in not_keywords):
-
                             job_link.append(self.driver.find_element(By.XPATH, f"(//div[contains(@class,'cust-job-tuple layout-wrapper lay-2 sjw__tuple')])[{j+1}]/div[1]/a").get_attribute('href'))
                             job_title.append(job_posting)
 
@@ -183,7 +102,6 @@ class NaukriSearch:
                     print_err1.append([f'page_{i}_post{j+1}',e1])
 
                 percent_complete = (i / len(set(new_curls))) * 100
-                
                 print(f"Progress: {percent_complete:.2f}%\r", end='')
 
                 i += 1
@@ -197,99 +115,11 @@ class NaukriSearch:
         job_df = pd.DataFrame({'Title' : job_title, 'URL' : job_link})
         return job_df
     
-    
     def get_keyskill_for_dfs(self, df):
-        
-#         self.driver.get(self.naukri)
-#         self.login_account()
-#         time.sleep(2)
-        
-        main_skill1 = []
-
-        for joburl in df.URL.values:
-            
-            self.driver.get(joburl)
-
-            dicti = {1: "div[contains(@class,'key-skill')]", 2: "div[contains(@class,'getJobKeySkillsSection key-skill')]", 3: "div[contains(@class,'styles_key-skill__GIPn_')]"}
-            for loc in dicti:
-                try:
-                    keyskills = []
-                    a = 'all'
-
-                    self.wait.until(EC.visibility_of_all_elements_located((By.XPATH, f"//{dicti[loc]}/div/a/span")))
-                    tot_skill = self.driver.find_elements(By.XPATH, f"//{dicti[loc]}/div/a/span")
-                    keyskills = [i.text for i in tot_skill]
-                    keyskills = ','.join(keyskills)
-
-                    if dicti[loc] == "div[contains(@class,'styles_key-skill__GIPn_')]":
-                        highlighted = self.driver.find_elements(By.XPATH, f"//{dicti[loc]}/div/a/i")
-                    else:
-                        highlighted = self.driver.find_elements(By.XPATH, f"//{dicti[loc]}/div/a/em")
-                    a = len(highlighted)
-                
-                except Exception as e:
-                    pass
-                
-#             try:
-#                 try:
-#                     job_age = self.driver.find_element(By.XPATH, "//div[@class='sumFoot']/span[1]/strong").text
-#                     applycount = self.driver.find_element(By.XPATH, "//div[@class='sumFoot']/span[2]/strong").text
-#                 except:
-#                     job_age = self.driver.find_element(By.XPATH, "//div[@class='sumFoot']/span[1]/strong").text
-#                     applycount = self.driver.find_element(By.XPATH, "//div[@class='sumFoot']/span[3]/strong").text
-#             except:
-#                 try:
-#                     job_age = self.driver.find_element(By.XPATH, "//section[@id='job_header']/div[2]/div[1]/span[1]/span").text
-#                     applycount = self.driver.find_element(By.XPATH, "//section[@id='job_header']/div[2]/div[1]/span[3]/span").text
-#                 except:
-#                     job_age = self.driver.find_element(By.XPATH, "//section[@id='job_header']/div[2]/div[1]/span[1]/span").text
-#                     applycount = self.driver.find_element(By.XPATH, "//section[@id='job_header']/div[2]/div[1]/span[2]/span").text
-
-#             try:
-#                 match_score = [ms.get_attribute('class') for ms in self.driver.find_elements(By.XPATH, "//div[@class='styles_JDC__match-score__VnjLL']//i")]
-#                 Early_Applicant = (1 if 'circle' in match_score[0] else 0) if len(match_score) != 0 else 'NA'
-#                 Keyskills = (1 if 'circle' in match_score[1] else 0) if len(match_score) != 0 else 'NA'
-#                 Location = (1 if 'circle' in match_score[2] else 0) if len(match_score) != 0 else 'NA'
-#                 Work_Experience = (1 if 'circle' in match_score[3] else 0) if len(match_score) != 0 else 'NA'
-#             except:
-#                 Early_Applicant = 'NA'
-#                 Keyskills = 'NA'
-#                 Location = 'NA'
-#                 Work_Experience = 'NA'
-
-#             try:
-#                 button = self.driver.find_element(By.XPATH, "//button[2]")
-#                 main_skill1.append((keyskills, a, button.text, joburl, job_age, applycount, Early_Applicant, Keyskills, Location, Work_Experience))
-#             except:
-#                 main_skill1.append((keyskills, a, "Not Possible", joburl, job_age, applycount, Early_Applicant, Keyskills, Location, Work_Experience))
-            
-            try:
-                button = self.driver.find_element(By.XPATH, "//button[2]")
-                main_skill1.append((keyskills, a, button.text, joburl))
-            except:
-                main_skill1.append((keyskills, a, "Not Possible", joburl))
-
-#             main_skill1 = [main_skill[i] for i in range(0,len(main_skill),3)]
-
-        apply_df = pd.DataFrame(main_skill1)
-
-        apply_df.columns = ['Skills','Highlighted','Response','URL']
-
-        apply_df = pd.merge(left=df,right=apply_df,on='URL', how='inner')
-        
-        return apply_df
-    
-    def get_keyskill_for_dfs1(self, df):
-        
-#         self.driver.get(self.naukri)
-#         self.login_account()
-#         time.sleep(2)
         main_skill = []
         for joburl in df.URL.values: 
             self.driver.get(joburl)
-
             dicti = {1: "div[contains(@class,'key-skill')]", 2: "div[contains(@class,'getJobKeySkillsSection key-skill')]", 3: "div[contains(@class,'styles_key-skill__GIPn_')]"}
-
             for loc in dicti:
                 try:
                     keyskills = ','.join([i.text for i in self.driver.find_elements(By.XPATH, f"//{dicti[loc]}/div/a/span")])
