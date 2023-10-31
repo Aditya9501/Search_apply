@@ -180,3 +180,85 @@ class NaukriSearch:
         apply_df = pd.merge(left=df, right=apply_df, on='URL', how='inner')
 
         return apply_df
+
+
+class AutoApply:
+    def __init__(self, user, passcode, URLS, path):
+        self.passcode = passcode
+        self.user = user
+        self.URLS = URLS
+        self.path = path
+        self.naukri = "https://www.naukri.com"
+        self.log_in_layer = (By.XPATH, "//a[@id='login_Layer']")
+        self.username_details = (By.XPATH, "//input[@placeholder='Enter your active Email ID / Username']")
+        self.password_details = (By.XPATH, "//input[@placeholder='Enter your password']")
+        self.log_in_click = (By.XPATH, "//button[@type='submit']")
+        self.driver = webdriver.Chrome()
+        self.driver.get(self.naukri)
+        self.wait = WebDriverWait(self.driver,15)
+        print(f'we visit {len(URLS)} job posting today')
+    
+    def login_account(self):
+        self.wait.until(EC.element_to_be_clickable(self.log_in_layer)).click()
+        self.wait.until(EC.visibility_of_element_located(self.username_details)).send_keys(self.user)
+        self.wait.until(EC.visibility_of_element_located(self.password_details)).send_keys(self.passcode)
+        self.wait.until(EC.element_to_be_clickable(self.log_in_click)).click()
+
+    def apply_to_links(self):
+        self.login_account()
+        time.sleep(2)
+        not_possible = []
+        applied = 0
+        in_applie = 0 
+        er=[]
+        inpu = []
+
+        for url in self.URLS:
+            self.driver.get(url)
+            try:
+        # Wait up to 10 seconds for the button to be clickable
+                WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable((By.XPATH, "//button[2]")))
+                button = self.driver.find_element(By.XPATH, "//button[2]")
+                if button.text == 'Apply':
+                    try:
+                        button.click()
+                        applied +=1
+                        time.sleep(1)
+                        self.wait.until(EC.visibility_of_all_elements_located((By.XPATH,"//div[@class='chatbot_DrawerContentWrapper']")))
+                        if self.driver.find_element(By.XPATH,"//div[@class='chatbot_DrawerContentWrapper']").is_displayed() == True:
+                            inpu.append([url,'requires input'])
+                        in_applie +=1
+                    except:
+                        pass
+                           
+                else:
+                    not_possible.append([url, button.text])
+            except Exception as e:
+                er.append([url,e])
+            
+        not_possible_df = pd.DataFrame(not_possible)
+        er_df =  pd.DataFrame(er)
+        detail_req = pd.DataFrame(inpu)
+        
+        
+        print(f'clicked on {applied} jobs')
+        print(f'properly applied are {applied-in_applie} jobs')
+        print(f'manual operation for {in_applie} posting')
+
+        current_datetime = datetime.datetime.now()
+        formatted_datetime = current_datetime.strftime("%d%m%y_%I%M%p")
+
+        filename = formatted_datetime+'.csv'
+        erfilename = formatted_datetime+'_er.csv'
+        detail_filename = formatted_datetime+'_detail.csv'
+        
+        save_path_filename = os.path.join(self.path,filename)
+        save_path_erfilename = os.path.join(self.path,erfilename)
+        save_path_detail_filename = os.path.join(self.path,detail_filename)
+        
+        if len(not_possible_df) !=0:
+            not_possible_df.to_csv(save_path_filename,index=False)
+        if len(er_df) !=0:
+            er_df.to_csv(save_path_erfilename,index=False)
+        if len(detail_req) !=0:
+            detail_req.to_csv(save_path_detail_filename,index=False)
